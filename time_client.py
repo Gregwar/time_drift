@@ -8,13 +8,14 @@ if len(sys.argv) < 2:
     exit()
 host = sys.argv[1]
 
-b = time.time()
+startTime = time.time()
 context = zmq.Context()
 socket = context.socket(zmq.REQ)
 socket.connect('tcp://'+host+':8881')
 
 def measureOffset():
     offset = []
+    # Sending 50 requests and averaging
     for x in range(50):
         start = time.time()
         socket.send_string('?')
@@ -29,5 +30,6 @@ base = measureOffset()
 while True:
     offset = measureOffset()-base
 
-    print('%f %.9f' % (time.time()-b, offset))
+    # Output is time since start, and drift of clock
+    print('%f %.9f' % (time.time()-startTime, offset))
     sys.stdout.flush()
